@@ -2,9 +2,9 @@ name: Main CI/CD Pipeline
 
 on:
   push:
-    branches: [main, develop, 'feature/*', 'hotfix/*']
-  pull_request:
     branches: [main, develop]
+  pull_request:
+    branches: [main]
   workflow_dispatch:
     inputs:
       force_backend:
