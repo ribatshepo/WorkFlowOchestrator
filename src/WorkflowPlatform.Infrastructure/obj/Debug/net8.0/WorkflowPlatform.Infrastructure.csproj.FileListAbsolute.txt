@@ -1,0 +1,7 @@
+D:\projects\development\WorkFlowOchestrator\src\WorkflowPlatform.Infrastructure\bin\Debug\net8.0\.xml
+D:\projects\development\WorkFlowOchestrator\src\WorkflowPlatform.Infrastructure\obj\Debug\net8.0\WorkflowPlatform.Infrastructure.csproj.AssemblyReference.cache
+D:\projects\development\WorkFlowOchestrator\src\WorkflowPlatform.Infrastructure\obj\Debug\net8.0\WorkflowPlatform.Infrastructure.GeneratedMSBuildEditorConfig.editorconfig
+D:\projects\development\WorkFlowOchestrator\src\WorkflowPlatform.Infrastructure\obj\Debug\net8.0\WorkflowPlatform.Infrastructure.AssemblyInfoInputs.cache
+D:\projects\development\WorkFlowOchestrator\src\WorkflowPlatform.Infrastructure\obj\Debug\net8.0\WorkflowPlatform.Infrastructure.AssemblyInfo.cs
+D:\projects\development\WorkFlowOchestrator\src\WorkflowPlatform.Infrastructure\obj\Debug\net8.0\WorkflowPlatform.Infrastructure.csproj.CoreCompileInputs.cache
+D:\projects\development\WorkFlowOchestrator\src\WorkflowPlatform.Infrastructure\obj\Debug\net8.0\WorkflowPlatform.Infrastructure.sourcelink.json

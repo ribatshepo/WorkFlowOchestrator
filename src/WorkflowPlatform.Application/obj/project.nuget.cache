@@ -1,0 +1,18 @@
+{
+  "version": 2,
+  "dgSpecHash": "5PllYOok+ho=",
+  "success": true,
+  "projectFilePath": "D:\\projects\\development\\WorkFlowOchestrator\\src\\WorkflowPlatform.Application\\WorkflowPlatform.Application.csproj",
+  "expectedPackageFiles": [
+    "C:\\Users\\bolale\\.nuget\\packages\\fluentvalidation\\11.9.0\\fluentvalidation.11.9.0.nupkg.sha512",
+    "C:\\Users\\bolale\\.nuget\\packages\\fluentvalidation.dependencyinjectionextensions\\11.9.0\\fluentvalidation.dependencyinjectionextensions.11.9.0.nupkg.sha512",
+    "C:\\Users\\bolale\\.nuget\\packages\\mediatr\\12.2.0\\mediatr.12.2.0.nupkg.sha512",
+    "C:\\Users\\bolale\\.nuget\\packages\\mediatr.contracts\\2.0.1\\mediatr.contracts.2.0.1.nupkg.sha512",
+    "C:\\Users\\bolale\\.nuget\\packages\\microsoft.codeanalysis.analyzers\\3.3.4\\microsoft.codeanalysis.analyzers.3.3.4.nupkg.sha512",
+    "C:\\Users\\bolale\\.nuget\\packages\\microsoft.codeanalysis.netanalyzers\\8.0.0\\microsoft.codeanalysis.netanalyzers.8.0.0.nupkg.sha512",
+    "C:\\Users\\bolale\\.nuget\\packages\\microsoft.extensions.dependencyinjection.abstractions\\8.0.0\\microsoft.extensions.dependencyinjection.abstractions.8.0.0.nupkg.sha512",
+    "C:\\Users\\bolale\\.nuget\\packages\\microsoft.extensions.logging.abstractions\\8.0.0\\microsoft.extensions.logging.abstractions.8.0.0.nupkg.sha512",
+    "C:\\Users\\bolale\\.nuget\\packages\\sonaranalyzer.csharp\\9.16.0.82469\\sonaranalyzer.csharp.9.16.0.82469.nupkg.sha512"
+  ],
+  "logs": []
+}

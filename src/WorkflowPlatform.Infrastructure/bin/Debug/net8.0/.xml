@@ -1,0 +1,83 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>WorkflowPlatform.Infrastructure</name>
+    </assembly>
+    <members>
+        <member name="T:WorkflowPlatform.Infrastructure.DependencyInjection">
+            <summary>
+            Dependency injection configuration for the Infrastructure layer.
+            Registers all infrastructure services and implementations.
+            </summary>
+        </member>
+        <member name="M:WorkflowPlatform.Infrastructure.DependencyInjection.AddInfrastructure(Microsoft.Extensions.DependencyInjection.IServiceCollection,Microsoft.Extensions.Configuration.IConfiguration)">
+            <summary>
+            Adds infrastructure services to the dependency injection container.
+            </summary>
+            <param name="services">The service collection</param>
+            <param name="configuration">The application configuration</param>
+            <returns>The service collection for method chaining</returns>
+        </member>
+        <member name="M:WorkflowPlatform.Infrastructure.DependencyInjection.EnsureDatabaseCreatedAsync(System.IServiceProvider,Microsoft.Extensions.Configuration.IConfiguration)">
+            <summary>
+            Ensures the database is created and migrated.
+            Use this method during application startup for development scenarios.
+            </summary>
+            <param name="services">The service provider</param>
+            <param name="configuration">The application configuration</param>
+            <returns>A task representing the asynchronous operation</returns>
+        </member>
+        <member name="T:WorkflowPlatform.Infrastructure.Persistence.Configurations.WorkflowAggregateConfiguration">
+            <summary>
+            Entity Framework configuration for WorkflowAggregate.
+            Defines the database mapping and relationships for workflow entities.
+            </summary>
+        </member>
+        <member name="T:WorkflowPlatform.Infrastructure.Persistence.Configurations.WorkflowNodeConfiguration">
+            <summary>
+            Entity Framework configuration for WorkflowNode.
+            Defines the database mapping for workflow node entities.
+            </summary>
+        </member>
+        <member name="T:WorkflowPlatform.Infrastructure.Persistence.WorkflowDbContext">
+            <summary>
+            Entity Framework DbContext for the Workflow Platform.
+            Configures entity mappings and database relationships.
+            </summary>
+        </member>
+        <member name="P:WorkflowPlatform.Infrastructure.Persistence.WorkflowDbContext.Workflows">
+            <summary>
+            Workflow definitions and their configuration.
+            </summary>
+        </member>
+        <member name="P:WorkflowPlatform.Infrastructure.Persistence.WorkflowDbContext.WorkflowNodes">
+            <summary>
+            Individual nodes within workflow definitions.
+            </summary>
+        </member>
+        <member name="M:WorkflowPlatform.Infrastructure.Persistence.WorkflowDbContext.SaveChangesAsync(System.Threading.CancellationToken)">
+            <summary>
+            Saves changes to the database and publishes domain events.
+            </summary>
+            <param name="cancellationToken">Cancellation token</param>
+            <returns>The number of state entries written to the database</returns>
+        </member>
+        <member name="T:WorkflowPlatform.Infrastructure.Repositories.WorkflowRepository">
+            <summary>
+            Entity Framework implementation of the workflow repository.
+            Provides data persistence operations for workflow aggregates.
+            </summary>
+        </member>
+        <member name="T:WorkflowPlatform.Infrastructure.Services.DateTimeService">
+            <summary>
+            Implementation of IDateTimeService that provides testable date/time functionality.
+            </summary>
+        </member>
+        <member name="T:WorkflowPlatform.Infrastructure.Services.NotificationService">
+            <summary>
+            Implementation of INotificationService for sending email notifications.
+            This is a placeholder implementation that logs notifications instead of sending actual emails.
+            </summary>
+        </member>
+    </members>
+</doc>
