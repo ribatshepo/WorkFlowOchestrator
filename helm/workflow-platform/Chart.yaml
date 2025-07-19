@@ -1,6 +1,6 @@
 apiVersion: v2
 name: workflow-platform
-description: A Helm chart for WorkflowPlatform - Workflow Orchestration Platform
+description: A Helm chart for WorkflowPlatform - Enterprise Workflow Orchestration Platform
 type: application
 version: 1.0.0
 appVersion: "1.0.0"
@@ -9,12 +9,25 @@ keywords:
   - orchestration
   - platform
   - automation
+  - enterprise
 home: https://github.com/ribatshepo/WorkFlowOchestrator
 sources:
   - https://github.com/ribatshepo/WorkFlowOchestrator
 maintainers:
   - name: WorkflowPlatform Team
     email: team@workflowplatform.com
+
+annotations:
+  # Security and deployment notes
+  artifacthub.io/license: Apache-2.0
+  artifacthub.io/operator: "false"
+  artifacthub.io/prerelease: "false"
+  artifacthub.io/containsSecurityUpdates: "true"
+  artifacthub.io/changes: |
+    - Fixed hardcoded credentials in Helm templates
+    - Added support for external secrets
+    - Enhanced security configuration options
+    - Added production-ready value templates
 dependencies:
   - name: postgresql
     version: "12.x.x"
@@ -28,6 +41,3 @@ dependencies:
     version: "11.x.x"
     repository: https://charts.bitnami.com/bitnami
     condition: rabbitmq.enabled
-annotations:
-  category: Developer Tools
-  licenses: MIT

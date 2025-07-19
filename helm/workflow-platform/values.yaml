@@ -115,6 +115,8 @@ database:
   host: postgresql
   port: 5432
   name: WorkflowPlatform
+  username: "" # Should be set via existing secret or values override
+  password: "" # Should be set via existing secret or values override
   existingSecret: ""
   secretKey: connection-string
 
@@ -129,6 +131,8 @@ rabbitmq:
   external: false
   host: rabbitmq
   port: 5672
+  username: "" # Should be set via existing secret or values override
+  password: "" # Should be set via existing secret or values override
   existingSecret: ""
   secretKey: connection-string
 
@@ -143,9 +147,11 @@ jwt:
 postgresql:
   enabled: true
   auth:
-    postgresPassword: "postgres123"
-    username: "workflow_user"
-    password: "workflow_password"
+    # SECURITY NOTE: These values should be overridden in production
+    # Use external secrets or helm install --set flags
+    postgresPassword: "" # Override with --set postgresql.auth.postgresPassword=<value>
+    username: "" # Override with --set postgresql.auth.username=<value>
+    password: "" # Override with --set postgresql.auth.password=<value>
     database: "WorkflowPlatform"
   primary:
     persistence:
@@ -161,7 +167,7 @@ externalServices:
     enabled: true
     auth:
       enabled: true
-      password: "redis123"
+      password: "" # Override with --set externalServices.redis.auth.password=<value>
     master:
       persistence:
         enabled: true
@@ -173,8 +179,8 @@ externalServices:
   rabbitmq:
     enabled: true
     auth:
-      username: "workflow_user"
-      password: "rabbitmq123"
+      username: "" # Override with --set externalServices.rabbitmq.auth.username=<value>
+      password: "" # Override with --set externalServices.rabbitmq.auth.password=<value>
     persistence:
       enabled: true
       size: 8Gi

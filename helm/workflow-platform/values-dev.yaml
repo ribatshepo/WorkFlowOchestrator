@@ -1,0 +1,42 @@
+# Development environment values for workflow-platform
+# This file contains example values for local development
+# DO NOT USE IN PRODUCTION - Contains example passwords
+
+global:
+  environment: development
+
+# Database configuration for development
+database:
+  username: "workflow_user"
+  password: "workflow_dev_password_123"
+
+# RabbitMQ configuration for development
+rabbitmq:
+  username: "workflow_user"
+  password: "rabbitmq_dev_password_123"
+
+# PostgreSQL subchart configuration for development
+postgresql:
+  auth:
+    postgresPassword: "postgres_dev_password_123"
+    username: "workflow_user"
+    password: "workflow_dev_password_123"
+    database: "WorkflowPlatform"
+
+# External services configuration for development
+externalServices:
+  redis:
+    auth:
+      password: "redis_dev_password_123"
+
+  rabbitmq:
+    auth:
+      username: "workflow_user"
+      password: "rabbitmq_dev_password_123"
+
+# JWT configuration for development
+jwt:
+  # In production, use existingSecret instead
+  secret: "development_jwt_secret_key_at_least_256_bits_long_12345678901234567890"
+  issuer: "workflow-platform-dev"
+  audience: "workflow-platform-users-dev"

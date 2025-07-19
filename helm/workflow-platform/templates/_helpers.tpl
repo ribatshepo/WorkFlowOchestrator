@@ -106,7 +106,7 @@ Database connection string
 {{- if .Values.database.existingSecret }}
 {{- printf "valueFrom:\n  secretKeyRef:\n    name: %s\n    key: %s" .Values.database.existingSecret .Values.database.secretKey | nindent 2 }}
 {{- else }}
-{{- printf "Host=%s;Port=%d;Database=%s;Username=workflow_user;Password=workflow_password" .Values.database.host (.Values.database.port | int) .Values.database.name }}
+{{- printf "Host=%s;Port=%d;Database=%s;Username=%s;Password=%s" .Values.database.host (.Values.database.port | int) .Values.database.name .Values.database.username .Values.database.password }}
 {{- end }}
 {{- end }}
 
@@ -128,6 +128,6 @@ RabbitMQ connection string
 {{- if .Values.rabbitmq.existingSecret }}
 {{- printf "valueFrom:\n  secretKeyRef:\n    name: %s\n    key: %s" .Values.rabbitmq.existingSecret .Values.rabbitmq.secretKey | nindent 2 }}
 {{- else }}
-{{- printf "amqp://workflow_user:rabbitmq123@%s:%d/" .Values.rabbitmq.host (.Values.rabbitmq.port | int) }}
+{{- printf "amqp://%s:%s@%s:%d/" .Values.rabbitmq.username .Values.rabbitmq.password .Values.rabbitmq.host (.Values.rabbitmq.port | int) }}
 {{- end }}
 {{- end }}
