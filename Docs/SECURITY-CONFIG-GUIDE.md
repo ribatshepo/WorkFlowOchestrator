@@ -117,10 +117,34 @@ InvalidOperationException: JWT Audience is not configured.
 - [ ] Clone repository
 - [ ] Install .NET 8 SDK
 - [ ] Install PostgreSQL locally
+- [ ] **Copy `.env.template` to `.env` and set secure passwords**
 - [ ] Configure User Secrets (see commands above)
 - [ ] Run `dotnet build` to verify configuration
 - [ ] Run `dotnet run` to start application
 - [ ] Access `/swagger` to verify API is running
+
+### ⚠️ **CRITICAL**: Environment File Setup
+
+**BEFORE running docker-compose or setup scripts:**
+
+1. **Copy the template file:**
+
+   ```bash
+   cp .env.template .env
+   ```
+
+2. **Edit `.env` with secure values:**
+
+   ```bash
+   # Set strong passwords (minimum 12 characters)
+   POSTGRES_PASSWORD=your_very_secure_postgres_password_here
+   REDIS_PASSWORD=your_very_secure_redis_password_here
+   RABBITMQ_PASSWORD=your_very_secure_rabbitmq_password_here
+   GRAFANA_PASSWORD=your_very_secure_grafana_password_here
+   JWT_SECRET=your_256_bit_jwt_secret_key_change_this_immediately
+   ```
+
+3. **NEVER commit `.env` files to source control**
 
 ### Team Secrets Sharing (Secure Methods Only)
 
@@ -139,7 +163,60 @@ InvalidOperationException: JWT Audience is not configured.
 
 ---
 
-## 🔍 Security Validation
+## � CI/CD Pipeline Security
+
+### GitHub Repository Secrets
+
+**Required for production deployment:**
+
+```bash
+# Production Database
+DATABASE_CONNECTION_STRING="Host=prod-db;Database=WorkflowPlatform;Username=prod_user;Password=SECURE_PASSWORD;Port=5432;SSL Mode=Require"
+
+# Production Redis  
+REDIS_CONNECTION_STRING="prod-redis:6379,password=SECURE_REDIS_PASSWORD"
+
+# Production RabbitMQ
+RABBITMQ_CONNECTION_STRING="amqp://prod_user:SECURE_RABBITMQ_PASSWORD@prod-rabbitmq:5672/"
+
+# JWT Configuration
+JWT_SECRET="PRODUCTION_JWT_SECRET_MINIMUM_256_BITS"
+JWT_ISSUER="WorkflowPlatform-Production"
+JWT_AUDIENCE="WorkflowPlatform-Production-Users"
+
+# Kubernetes Access
+KUBECONFIG="base64_encoded_kubeconfig_file"
+
+# Code Quality
+SONAR_TOKEN="your_sonarcloud_token"
+```
+
+### CI/CD Security Best Practices
+
+- **✅ DO**: Use GitHub repository secrets for all sensitive data
+- **✅ DO**: Use different secrets for staging and production environments  
+- **✅ DO**: Rotate secrets regularly
+- **✅ DO**: Use environment-specific namespaces in Kubernetes
+- **✅ DO**: Enable branch protection rules on main/develop branches
+
+- **❌ NEVER**: Hardcode secrets in workflow files
+- **❌ NEVER**: Log secrets in CI/CD output
+- **❌ NEVER**: Use development secrets in production
+- **❌ NEVER**: Commit `.env` files to source control
+
+### Security Validation in CI/CD
+
+The pipeline includes:
+
+- **CodeQL Security Scanning** - Automated vulnerability detection
+- **Trivy Container Scanning** - Docker image security analysis  
+- **SonarCloud Integration** - Code quality and security gates
+- **SBOM Generation** - Software Bill of Materials
+- **Container Image Signing** - Cosign-based verification
+
+---
+
+## �🔍 Security Validation
 
 ### Pre-Commit Checks
 
