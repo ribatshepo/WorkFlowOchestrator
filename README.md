@@ -1,10 +1,7 @@
 # Workflow Orchestration Platform
 
-![Workflow Platform Logo](https://via.placeholder.com/200x80/2563eb/ffffff?text=Workflow+Platform)
-
 ## Enterprise-grade workflow orchestration with visual design and real-time execution monitoring
 
-[![Build Status](https://github.com/company/workflow-platform/workflows/CI%2FCD/badge.svg)](https://github.com/company/workflow-platform/actions)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![.NET](https://img.shields.io/badge/.NET-8.0-purple.svg)](https://dotnet.microsoft.com/)
 [![Next.js](https://img.shields.io/badge/Next.js-14-black.svg)](https://nextjs.org/)
