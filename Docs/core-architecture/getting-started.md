@@ -443,14 +443,14 @@ public class Node : Entity<Guid>
 }
 ```
 
-2. **Add to DbContext**:
+**Add to DbContext**:
 
 ```csharp
 // WorkflowPlatform.Infrastructure/Persistence/WorkflowDbContext.cs
 public DbSet<Node> Nodes { get; set; }
 ```
 
-3. **Create entity configuration**:
+**Create entity configuration**:
 
 ```csharp
 // WorkflowPlatform.Infrastructure/Persistence/Configurations/NodeConfiguration.cs
@@ -465,7 +465,7 @@ public class NodeConfiguration : IEntityTypeConfiguration<Node>
 }
 ```
 
-4. **Add migration and update database**:
+**Add migration and update database**:
 
 ```bash
 dotnet ef migrations add AddNodeEntity --project WorkflowPlatform.Infrastructure --startup-project WorkflowPlatform.API
@@ -481,7 +481,7 @@ dotnet ef database update --project WorkflowPlatform.Infrastructure --startup-pr
 public record CreateNodeCommand(string Name, NodeType Type) : IRequest<CreateNodeResult>;
 ```
 
-2. **Create handler**:
+**Create handler**:
 
 ```csharp
 public class CreateNodeHandler : IRequestHandler<CreateNodeCommand, CreateNodeResult>
@@ -490,7 +490,7 @@ public class CreateNodeHandler : IRequestHandler<CreateNodeCommand, CreateNodeRe
 }
 ```
 
-3. **Add controller endpoint**:
+1. **Add controller endpoint**:
 
 ```csharp
 // WorkflowPlatform.API/Controllers/NodesController.cs

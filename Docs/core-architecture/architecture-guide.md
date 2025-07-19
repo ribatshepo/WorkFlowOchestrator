@@ -15,7 +15,7 @@ The Workflow Platform implements **Clean Architecture** principles to create a m
 
 ### 1. Dependency Inversion Principle
 
-**Inner layers never depend on outer layers**
+Inner layers never depend on outer layers
 
 ```mermaid
 graph TD
@@ -73,7 +73,7 @@ Clients depend only on interfaces they use:
 **Dependencies**: None (innermost layer)  
 **Location**: `WorkflowPlatform.Domain`
 
-#### Components
+#### Domain Components
 
 ##### 1. Entities
 
@@ -377,7 +377,7 @@ public record WorkflowExecutionStartedEvent(
 **Dependencies**: Domain layer only  
 **Location**: `WorkflowPlatform.Application`
 
-#### Components
+#### Application Components
 
 ##### 1. Commands (CQRS Write Operations)
 
@@ -596,7 +596,7 @@ public class CreateWorkflowCommandValidator : AbstractValidator<CreateWorkflowCo
 **Dependencies**: Application and Domain layers  
 **Location**: `WorkflowPlatform.Infrastructure`
 
-#### Components
+#### Infrastructure Components
 
 ##### 1. Data Persistence (Entity Framework Core)
 
@@ -896,7 +896,7 @@ public class WorkflowRepository : Repository<WorkflowAggregate, Guid>, IWorkflow
 **Dependencies**: Application layer (through dependency injection)  
 **Location**: `WorkflowPlatform.API`
 
-#### Components
+#### API Components
 
 ##### 1. Controllers
 
