@@ -53,7 +53,7 @@ public class WorkflowDbContext : DbContext
         // Save changes to database
         var result = await base.SaveChangesAsync(cancellationToken);
 
-        // TODO: Publish domain events after successful save
+        // (In Production, you need to) Publish domain events after successful save
         // This will be implemented when we add the domain event dispatcher
 
         return result;

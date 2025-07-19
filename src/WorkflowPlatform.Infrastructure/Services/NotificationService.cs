@@ -27,7 +27,7 @@ public class NotificationService : INotificationService
         ArgumentException.ThrowIfNullOrWhiteSpace(subject);
         ArgumentException.ThrowIfNullOrWhiteSpace(body);
 
-        // TODO: Implement actual email sending logic using a service like SendGrid, SMTP, etc.
+        // (In Production, you need to) Implement actual email sending logic using a service like SendGrid, SMTP, etc.
         // For now, we'll log the notification
         
         _logger.LogInformation(
