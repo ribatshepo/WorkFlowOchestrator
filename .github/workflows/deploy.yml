@@ -1,0 +1,348 @@
+name: Deploy to Kubernetes
+
+on:
+  workflow_call:
+    inputs:
+      environment:
+        required: true
+        type: string
+        description: 'Deployment environment (staging/production)'
+      registry:
+        required: true
+        type: string
+        description: 'Container registry URL'
+      image-name:
+        required: true
+        type: string
+        description: 'Base image name'
+      api-image-tag:
+        required: true
+        type: string
+        description: 'API image tag to deploy'
+      frontend-image-tag:
+        required: true
+        type: string
+        description: 'Frontend image tag to deploy'
+
+env:
+  HELM_VERSION: '3.12.0'
+  KUBECTL_VERSION: '1.28.0'
+
+jobs:
+  deploy:
+    name: Deploy to ${{ inputs.environment }}
+    runs-on: ubuntu-latest
+    environment: ${{ inputs.environment }}
+    permissions:
+      contents: read
+      id-token: write
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Helm
+        uses: azure/setup-helm@v3
+        with:
+          version: ${{ env.HELM_VERSION }}
+
+      - name: Setup kubectl
+        uses: azure/setup-kubectl@v3
+        with:
+          version: ${{ env.KUBECTL_VERSION }}
+
+      - name: Configure kubectl
+        run: |
+          mkdir -p ~/.kube
+          echo "${{ secrets.KUBECONFIG }}" | base64 -d > ~/.kube/config
+          chmod 600 ~/.kube/config
+
+      - name: Verify cluster connection
+        run: |
+          kubectl cluster-info
+          kubectl get nodes
+
+      - name: Create namespace if not exists
+        run: |
+          kubectl create namespace workflow-platform-${{ inputs.environment }} --dry-run=client -o yaml | kubectl apply -f -
+
+      - name: Setup secrets
+        run: |
+          # Database connection string
+          kubectl create secret generic database-secret \
+            --from-literal=connection-string="${{ secrets.DATABASE_CONNECTION_STRING }}" \
+            --namespace=workflow-platform-${{ inputs.environment }} \
+            --dry-run=client -o yaml | kubectl apply -f -
+          
+          # JWT configuration
+          kubectl create secret generic jwt-secret \
+            --from-literal=secret="${{ secrets.JWT_SECRET }}" \
+            --from-literal=issuer="${{ secrets.JWT_ISSUER }}" \
+            --from-literal=audience="${{ secrets.JWT_AUDIENCE }}" \
+            --namespace=workflow-platform-${{ inputs.environment }} \
+            --dry-run=client -o yaml | kubectl apply -f -
+          
+          # Redis connection
+          kubectl create secret generic redis-secret \
+            --from-literal=connection-string="${{ secrets.REDIS_CONNECTION_STRING }}" \
+            --namespace=workflow-platform-${{ inputs.environment }} \
+            --dry-run=client -o yaml | kubectl apply -f -
+          
+          # RabbitMQ connection
+          kubectl create secret generic rabbitmq-secret \
+            --from-literal=connection-string="${{ secrets.RABBITMQ_CONNECTION_STRING }}" \
+            --namespace=workflow-platform-${{ inputs.environment }} \
+            --dry-run=client -o yaml | kubectl apply -f -
+
+      - name: Add Helm repositories
+        run: |
+          helm repo add bitnami https://charts.bitnami.com/bitnami
+          helm repo add prometheus-community https://prometheus-community.github.io/helm-charts
+          helm repo update
+
+      - name: Deploy infrastructure dependencies
+        if: ${{ inputs.environment == 'staging' || (inputs.environment == 'production' && github.ref == 'refs/heads/main') }}
+        run: |
+          # PostgreSQL
+          helm upgrade --install postgresql bitnami/postgresql \
+            --namespace workflow-platform-${{ inputs.environment }} \
+            --set auth.postgresPassword="${{ secrets.POSTGRES_PASSWORD }}" \
+            --set auth.database="WorkflowPlatform" \
+            --set primary.persistence.size=20Gi \
+            --set metrics.enabled=true \
+            --wait --timeout=10m
+          
+          # Redis
+          helm upgrade --install redis bitnami/redis \
+            --namespace workflow-platform-${{ inputs.environment }} \
+            --set auth.password="${{ secrets.REDIS_PASSWORD }}" \
+            --set master.persistence.size=10Gi \
+            --set metrics.enabled=true \
+            --wait --timeout=10m
+          
+          # RabbitMQ
+          helm upgrade --install rabbitmq bitnami/rabbitmq \
+            --namespace workflow-platform-${{ inputs.environment }} \
+            --set auth.username="${{ secrets.RABBITMQ_USER }}" \
+            --set auth.password="${{ secrets.RABBITMQ_PASSWORD }}" \
+            --set persistence.size=10Gi \
+            --set metrics.enabled=true \
+            --wait --timeout=10m
+
+      - name: Deploy monitoring stack
+        if: ${{ inputs.environment == 'production' }}
+        run: |
+          # Prometheus
+          helm upgrade --install prometheus prometheus-community/kube-prometheus-stack \
+            --namespace monitoring \
+            --create-namespace \
+            --set grafana.adminPassword="${{ secrets.GRAFANA_PASSWORD }}" \
+            --set prometheus.prometheusSpec.retention=30d \
+            --set prometheus.prometheusSpec.storageSpec.volumeClaimTemplate.spec.resources.requests.storage=50Gi \
+            --wait --timeout=15m
+
+      - name: Prepare Helm values
+        run: |
+          cat > values-${{ inputs.environment }}.yaml << EOF
+          global:
+            environment: ${{ inputs.environment }}
+            imageRegistry: ${{ inputs.registry }}
+            imagePullSecrets:
+              - name: ghcr-secret
+          
+          api:
+            image:
+              repository: ${{ inputs.registry }}/${{ inputs.image-name }}/api
+              tag: ${{ inputs.api-image-tag }}
+            replicaCount: ${{ inputs.environment == 'production' && 3 || 1 }}
+            resources:
+              requests:
+                memory: "512Mi"
+                cpu: "250m"
+              limits:
+                memory: "2Gi"
+                cpu: "1000m"
+            autoscaling:
+              enabled: ${{ inputs.environment == 'production' && 'true' || 'false' }}
+              minReplicas: ${{ inputs.environment == 'production' && 3 || 1 }}
+              maxReplicas: ${{ inputs.environment == 'production' && 10 || 3 }}
+              targetCPUUtilizationPercentage: 70
+              targetMemoryUtilizationPercentage: 80
+          
+          frontend:
+            image:
+              repository: ${{ inputs.registry }}/${{ inputs.image-name }}/frontend
+              tag: ${{ inputs.frontend-image-tag }}
+            replicaCount: ${{ inputs.environment == 'production' && 2 || 1 }}
+            resources:
+              requests:
+                memory: "128Mi"
+                cpu: "100m"
+              limits:
+                memory: "256Mi"
+                cpu: "200m"
+          
+          ingress:
+            enabled: true
+            className: nginx
+            annotations:
+              nginx.ingress.kubernetes.io/ssl-redirect: "true"
+              nginx.ingress.kubernetes.io/force-ssl-redirect: "true"
+              cert-manager.io/cluster-issuer: letsencrypt-prod
+            hosts:
+              - host: ${{ inputs.environment == 'production' && 'app.workflowplatform.com' || 'staging.workflowplatform.com' }}
+                paths:
+                  - path: /
+                    pathType: Prefix
+                    service:
+                      name: frontend
+                      port: 80
+                  - path: /api
+                    pathType: Prefix
+                    service:
+                      name: api
+                      port: 8080
+            tls:
+              - secretName: workflowplatform-tls
+                hosts:
+                  - ${{ inputs.environment == 'production' && 'app.workflowplatform.com' || 'staging.workflowplatform.com' }}
+          
+          database:
+            external: true
+            host: postgresql
+            port: 5432
+            name: WorkflowPlatform
+            existingSecret: database-secret
+            secretKey: connection-string
+          
+          redis:
+            external: true
+            host: redis-master
+            port: 6379
+            existingSecret: redis-secret
+            secretKey: connection-string
+          
+          rabbitmq:
+            external: true
+            host: rabbitmq
+            port: 5672
+            existingSecret: rabbitmq-secret
+            secretKey: connection-string
+          
+          jwt:
+            existingSecret: jwt-secret
+            secretKeys:
+              secret: secret
+              issuer: issuer
+              audience: audience
+          
+          monitoring:
+            enabled: ${{ inputs.environment == 'production' && 'true' || 'false' }}
+            serviceMonitor:
+              enabled: true
+              interval: 30s
+            grafana:
+              enabled: true
+          
+          security:
+            podSecurityPolicy:
+              enabled: true
+            networkPolicy:
+              enabled: true
+            securityContext:
+              runAsNonRoot: true
+              runAsUser: 1000
+              fsGroup: 1000
+          EOF
+
+      - name: Deploy WorkflowPlatform
+        run: |
+          helm upgrade --install workflow-platform-${{ inputs.environment }} ./helm/workflow-platform \
+            --namespace workflow-platform-${{ inputs.environment }} \
+            --values values-${{ inputs.environment }}.yaml \
+            --set global.buildVersion=${{ github.sha }} \
+            --set global.buildDate=$(date -u +"%Y-%m-%dT%H:%M:%SZ") \
+            --wait --timeout=20m
+
+      - name: Verify deployment
+        run: |
+          kubectl rollout status deployment/workflow-platform-${{ inputs.environment }}-api \
+            --namespace workflow-platform-${{ inputs.environment }} \
+            --timeout=600s
+          
+          kubectl rollout status deployment/workflow-platform-${{ inputs.environment }}-frontend \
+            --namespace workflow-platform-${{ inputs.environment }} \
+            --timeout=600s
+
+      - name: Run health checks
+        run: |
+          # Wait for services to be ready
+          kubectl wait --for=condition=available deployment/workflow-platform-${{ inputs.environment }}-api \
+            --namespace workflow-platform-${{ inputs.environment }} \
+            --timeout=300s
+          
+          # Port forward for health check
+          kubectl port-forward service/workflow-platform-${{ inputs.environment }}-api 8080:8080 \
+            --namespace workflow-platform-${{ inputs.environment }} &
+          PF_PID=$!
+          
+          sleep 10
+          
+          # Health check
+          curl -f http://localhost:8080/health || exit 1
+          curl -f http://localhost:8080/ready || exit 1
+          
+          # Cleanup port forward
+          kill $PF_PID
+
+      - name: Run smoke tests
+        if: ${{ inputs.environment == 'staging' }}
+        run: |
+          echo "🧪 Running smoke tests for staging environment"
+          # Smoke tests implementation will be added in subsequent tasks
+
+      - name: Update deployment status
+        if: always()
+        run: |
+          echo "Deployment to ${{ inputs.environment }} completed"
+          echo "API Image: ${{ inputs.registry }}/${{ inputs.image-name }}/api:${{ inputs.api-image-tag }}"
+          echo "Frontend Image: ${{ inputs.registry }}/${{ inputs.image-name }}/frontend:${{ inputs.frontend-image-tag }}"
+          echo "Environment URL: https://${{ inputs.environment == 'production' && 'app.workflowplatform.com' || 'staging.workflowplatform.com' }}"
+
+  rollback:
+    name: Rollback on Failure
+    runs-on: ubuntu-latest
+    needs: deploy
+    if: ${{ failure() }}
+    environment: ${{ inputs.environment }}
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Helm
+        uses: azure/setup-helm@v3
+        with:
+          version: ${{ env.HELM_VERSION }}
+
+      - name: Setup kubectl
+        uses: azure/setup-kubectl@v3
+        with:
+          version: ${{ env.KUBECTL_VERSION }}
+
+      - name: Configure kubectl
+        run: |
+          mkdir -p ~/.kube
+          echo "${{ secrets.KUBECONFIG }}" | base64 -d > ~/.kube/config
+          chmod 600 ~/.kube/config
+
+      - name: Rollback deployment
+        run: |
+          echo "🔄 Rolling back deployment due to failure"
+          helm rollback workflow-platform-${{ inputs.environment }} \
+            --namespace workflow-platform-${{ inputs.environment }} \
+            --wait --timeout=10m
+
+      - name: Verify rollback
+        run: |
+          kubectl rollout status deployment/workflow-platform-${{ inputs.environment }}-api \
+            --namespace workflow-platform-${{ inputs.environment }} \
+            --timeout=300s
