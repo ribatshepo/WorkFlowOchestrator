@@ -215,7 +215,5 @@ graph TD
 
 ---
 
-*CI/CD Pipeline Documentation - Epic WOP-E003.1 - Last updated: July 19, 2025*
-
 *Last updated: July 19, 2025*
 *Version: 1.0*
