@@ -1,0 +1,14 @@
+D:\projects\development\WorkFlowOchestrator\src\WorkflowPlatform.Domain\bin\Debug\net8.0\.xml
+D:\projects\development\WorkFlowOchestrator\src\WorkflowPlatform.Domain\bin\Debug\net8.0\WorkflowPlatform.Domain.deps.json
+D:\projects\development\WorkFlowOchestrator\src\WorkflowPlatform.Domain\bin\Debug\net8.0\WorkflowPlatform.Domain.dll
+D:\projects\development\WorkFlowOchestrator\src\WorkflowPlatform.Domain\bin\Debug\net8.0\WorkflowPlatform.Domain.pdb
+D:\projects\development\WorkFlowOchestrator\src\WorkflowPlatform.Domain\obj\Debug\net8.0\WorkflowPlatform.Domain.csproj.AssemblyReference.cache
+D:\projects\development\WorkFlowOchestrator\src\WorkflowPlatform.Domain\obj\Debug\net8.0\WorkflowPlatform.Domain.GeneratedMSBuildEditorConfig.editorconfig
+D:\projects\development\WorkFlowOchestrator\src\WorkflowPlatform.Domain\obj\Debug\net8.0\WorkflowPlatform.Domain.AssemblyInfoInputs.cache
+D:\projects\development\WorkFlowOchestrator\src\WorkflowPlatform.Domain\obj\Debug\net8.0\WorkflowPlatform.Domain.AssemblyInfo.cs
+D:\projects\development\WorkFlowOchestrator\src\WorkflowPlatform.Domain\obj\Debug\net8.0\WorkflowPlatform.Domain.csproj.CoreCompileInputs.cache
+D:\projects\development\WorkFlowOchestrator\src\WorkflowPlatform.Domain\obj\Debug\net8.0\WorkflowPlatform.Domain.sourcelink.json
+D:\projects\development\WorkFlowOchestrator\src\WorkflowPlatform.Domain\obj\Debug\net8.0\WorkflowPlatform.Domain.dll
+D:\projects\development\WorkFlowOchestrator\src\WorkflowPlatform.Domain\obj\Debug\net8.0\refint\WorkflowPlatform.Domain.dll
+D:\projects\development\WorkFlowOchestrator\src\WorkflowPlatform.Domain\obj\Debug\net8.0\WorkflowPlatform.Domain.pdb
+D:\projects\development\WorkFlowOchestrator\src\WorkflowPlatform.Domain\obj\Debug\net8.0\ref\WorkflowPlatform.Domain.dll

@@ -1,0 +1,17 @@
+D:\projects\development\WorkFlowOchestrator\src\WorkflowPlatform.Application\bin\Debug\net8.0\.xml
+D:\projects\development\WorkFlowOchestrator\src\WorkflowPlatform.Application\bin\Debug\net8.0\WorkflowPlatform.Application.deps.json
+D:\projects\development\WorkFlowOchestrator\src\WorkflowPlatform.Application\bin\Debug\net8.0\WorkflowPlatform.Application.dll
+D:\projects\development\WorkFlowOchestrator\src\WorkflowPlatform.Application\bin\Debug\net8.0\WorkflowPlatform.Application.pdb
+D:\projects\development\WorkFlowOchestrator\src\WorkflowPlatform.Application\bin\Debug\net8.0\WorkflowPlatform.Domain.dll
+D:\projects\development\WorkFlowOchestrator\src\WorkflowPlatform.Application\bin\Debug\net8.0\WorkflowPlatform.Domain.pdb
+D:\projects\development\WorkFlowOchestrator\src\WorkflowPlatform.Application\obj\Debug\net8.0\WorkflowPlatform.Application.csproj.AssemblyReference.cache
+D:\projects\development\WorkFlowOchestrator\src\WorkflowPlatform.Application\obj\Debug\net8.0\WorkflowPlatform.Application.GeneratedMSBuildEditorConfig.editorconfig
+D:\projects\development\WorkFlowOchestrator\src\WorkflowPlatform.Application\obj\Debug\net8.0\WorkflowPlatform.Application.AssemblyInfoInputs.cache
+D:\projects\development\WorkFlowOchestrator\src\WorkflowPlatform.Application\obj\Debug\net8.0\WorkflowPlatform.Application.AssemblyInfo.cs
+D:\projects\development\WorkFlowOchestrator\src\WorkflowPlatform.Application\obj\Debug\net8.0\WorkflowPlatform.Application.csproj.CoreCompileInputs.cache
+D:\projects\development\WorkFlowOchestrator\src\WorkflowPlatform.Application\obj\Debug\net8.0\WorkflowPlatform.Application.sourcelink.json
+D:\projects\development\WorkFlowOchestrator\src\WorkflowPlatform.Application\obj\Debug\net8.0\Workflow.2861B819.Up2Date
+D:\projects\development\WorkFlowOchestrator\src\WorkflowPlatform.Application\obj\Debug\net8.0\WorkflowPlatform.Application.dll
+D:\projects\development\WorkFlowOchestrator\src\WorkflowPlatform.Application\obj\Debug\net8.0\refint\WorkflowPlatform.Application.dll
+D:\projects\development\WorkFlowOchestrator\src\WorkflowPlatform.Application\obj\Debug\net8.0\WorkflowPlatform.Application.pdb
+D:\projects\development\WorkFlowOchestrator\src\WorkflowPlatform.Application\obj\Debug\net8.0\ref\WorkflowPlatform.Application.dll

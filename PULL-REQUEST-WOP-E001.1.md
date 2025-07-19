@@ -1,4 +1,4 @@
-# 🚀 Pull Request: Epic WOP-E001.1 - Core Architecture Setup
+# Pull Request: Epic WOP-E001.1 - Core Architecture Setup
 
 ## 📋 Overview
 
@@ -6,7 +6,7 @@ This Pull Request implements the complete Clean Architecture foundation for the 
 
 **Branch:** `architecture` → `develop`  
 **Epic:** WOP-E001.1 - Core Architecture Setup  
-**Status:** ✅ Ready for Review & Merge  
+**Status:**Ready for Review & Merge  
 
 ---
 
@@ -14,11 +14,11 @@ This Pull Request implements the complete Clean Architecture foundation for the 
 
 ### 🏗️ Architecture Implementation
 
-- **✅ Clean Architecture**: 4-layer separation (Domain, Application, Infrastructure, API)
-- **✅ CQRS Pattern**: MediatR-based command/query handling with FluentValidation
-- **✅ Domain-Driven Design**: Aggregates, entities, value objects, and domain events
-- **✅ Dependency Injection**: Complete IoC container setup across all layers
-- **✅ Entity Framework Core**: PostgreSQL integration with comprehensive configurations
+- **Clean Architecture**: 4-layer separation (Domain, Application, Infrastructure, API)
+- **CQRS Pattern**: MediatR-based command/query handling with FluentValidation
+- **Domain-Driven Design**: Aggregates, entities, value objects, and domain events
+- **Dependency Injection**: Complete IoC container setup across all layers
+- **Entity Framework Core**: PostgreSQL integration with comprehensive configurations
 
 ### 🔧 Technical Features
 
@@ -90,40 +90,43 @@ This Pull Request implements the complete Clean Architecture foundation for the 
 #### Documentation
 
 - `EPIC-WOP-E001.1-COMPLETED.md` - Epic completion documentation
+- `SECURITY-CONFIG-GUIDE.md` - Security configuration and secrets management guide
 
 ---
 
 ## 🔍 Code Review Checklist
 
-### ✅ Architecture & Design
+###Architecture & Design
 
 - [x] Clean Architecture principles followed with proper dependency flow
 - [x] SOLID principles applied throughout the codebase
 - [x] Domain-Driven Design patterns implemented correctly
 - [x] Separation of concerns maintained across all layers
 
-### ✅ Security
+###Security
 
 - [x] JWT authentication properly configured with secure defaults
+- [x] **NO HARDCODED SECRETS** - All sensitive data externalized  
 - [x] Input validation implemented with FluentValidation
-- [x] Configuration secrets managed securely (User Secrets for dev)
-- [x] No hardcoded credentials or sensitive information
+- [x] Configuration secrets managed securely (User Secrets for dev, Environment Variables for prod)
+- [x] Application fails fast if required secrets are missing
+- [x] Security configuration guide provided for development teams
 
-### ✅ Performance
+###Performance
 
 - [x] Async/await patterns used correctly throughout
 - [x] Entity Framework configured with proper tracking and caching
 - [x] Dependency injection scoped appropriately
 - [x] Database queries optimized with proper indexing strategy
 
-### ✅ Testing & Quality
+###Testing & Quality
 
 - [x] Code builds successfully in both Debug and Release configurations
 - [x] No compiler warnings or errors
 - [x] Unit test foundation established with proper patterns
 - [x] Health checks implemented for monitoring
 
-### ✅ Documentation
+###Documentation
 
 - [x] XML documentation provided for public APIs
 - [x] README and technical documentation updated
@@ -134,7 +137,7 @@ This Pull Request implements the complete Clean Architecture foundation for the 
 
 ## 🧪 Testing Verification
 
-### Build Status ✅
+### Build Status
 
 ```bash
 dotnet clean
@@ -145,13 +148,13 @@ Build succeeded.
 Time Elapsed 00:00:02.60
 ```
 
-### Health Checks ✅
+### Health Checks
 
 - Database connectivity validation
 - Application health monitoring
 - Custom workflow engine health checks
 
-### API Endpoints ✅
+### API Endpoints
 
 - `/health` - Health check endpoint
 - `/health-ui` - Health monitoring dashboard
@@ -165,22 +168,30 @@ Time Elapsed 00:00:02.60
 ### Database Setup
 
 ```bash
-# Connection string required in appsettings.json
+# Connection string required in appsettings.json or User Secrets
 "ConnectionStrings": {
-  "DefaultConnection": "Host=localhost;Database=WorkflowPlatform;Username=your_username;Password=your_password"
+  "DefaultConnection": "Host={DB_HOST};Database={DB_NAME};Username={DB_USER};Password={DB_PASSWORD}"
 }
+
+# For development, use User Secrets:
+dotnet user-secrets set "ConnectionStrings:DefaultConnection" "Host=localhost;Database=WorkflowPlatformDev;Username=devuser;Password=devpassword"
 ```
 
 ### JWT Configuration
 
 ```bash
-# Required JWT settings
+# JWT settings - Use User Secrets for development, Environment Variables for production
 "Jwt": {
-  "Secret": "your-super-secret-jwt-key-min-256-bits-long",
-  "Issuer": "WorkflowPlatform",
-  "Audience": "WorkflowPlatform-Users",
+  "Secret": "{JWT_SECRET_FROM_ENVIRONMENT}",
+  "Issuer": "{JWT_ISSUER}",
+  "Audience": "{JWT_AUDIENCE}",
   "ExpirationHours": 24
 }
+
+# Configure via User Secrets (development):
+dotnet user-secrets set "Jwt:Secret" "your-development-jwt-secret-key-min-256-bits"
+dotnet user-secrets set "Jwt:Issuer" "WorkflowPlatform-Dev"
+dotnet user-secrets set "Jwt:Audience" "WorkflowPlatform-Dev-Users"
 ```
 
 ---
@@ -210,12 +221,12 @@ Time Elapsed 00:00:02.60
 
 | Requirement | Status | Verification |
 |-------------|--------|-------------|
-| Multi-layer Solution Structure | ✅ Complete | 4 projects with proper dependencies |
-| Dependency Injection Setup | ✅ Complete | IoC containers configured in each layer |
-| MediatR Integration | ✅ Complete | CQRS pattern with handlers implemented |
-| Entity Framework Core | ✅ Complete | PostgreSQL provider with configurations |
-| Base Domain Entities | ✅ Complete | AggregateRoot, Entity, ValueObject classes |
-| Configuration System | ✅ Complete | Multi-environment with user secrets |
+| Multi-layer Solution Structure |Complete | 4 projects with proper dependencies |
+| Dependency Injection Setup |Complete | IoC containers configured in each layer |
+| MediatR Integration |Complete | CQRS pattern with handlers implemented |
+| Entity Framework Core |Complete | PostgreSQL provider with configurations |
+| Base Domain Entities |Complete | AggregateRoot, Entity, ValueObject classes |
+| Configuration System |Complete | Multi-environment with user secrets |
 
 ---
 
@@ -225,15 +236,36 @@ Time Elapsed 00:00:02.60
 
 - .NET 8.0 SDK installed
 - PostgreSQL database server
-- Development environment with user secrets configured
+- Environment variables or User Secrets configured for sensitive data
 
 ### Startup Process
 
-1. Database connection configured in appsettings
-2. JWT secrets properly set
+1. Database connection configured via User Secrets (dev) or Environment Variables (prod)
+2. JWT secrets configured securely (no hardcoded values)
 3. `dotnet run` starts the application
 4. Swagger UI available at `/swagger`
 5. Health monitoring at `/health-ui`
+
+### Security Configuration
+
+**Development Environment:**
+
+```bash
+# Use User Secrets for sensitive configuration
+dotnet user-secrets init
+dotnet user-secrets set "ConnectionStrings:DefaultConnection" "your-dev-db-connection"
+dotnet user-secrets set "Jwt:Secret" "your-development-jwt-secret"
+```
+
+**Production Environment:**
+
+```bash
+# Use Environment Variables for production
+export ConnectionStrings__DefaultConnection="your-production-db-connection"
+export Jwt__Secret="your-production-jwt-secret"
+export Jwt__Issuer="your-production-issuer"
+export Jwt__Audience="your-production-audience"
+```
 
 ---
 
@@ -256,7 +288,7 @@ Time Elapsed 00:00:02.60
 
 ---
 
-## ✅ Pre-Merge Checklist
+##Pre-Merge Checklist
 
 - [x] All acceptance criteria met (100%)
 - [x] Build succeeds in Release configuration
@@ -267,12 +299,12 @@ Time Elapsed 00:00:02.60
 - [x] Health checks operational
 - [x] Configuration management secure
 
-**Ready for Merge** ✅
+**Ready for Merge**
 
 ---
 
 **Epic:** WOP-E001.1 - Core Architecture Setup  
-**Build Status:** ✅ SUCCESS  
-**Security Status:** ✅ APPROVED  
-**Architecture Status:** ✅ COMPLIANT  
-**Documentation Status:** ✅ COMPLETE
+**Build Status:**SUCCESS  
+**Security Status:**APPROVED  
+**Architecture Status:**COMPLIANT  
+**Documentation Status:**COMPLETE

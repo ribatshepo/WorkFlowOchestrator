@@ -31,7 +31,8 @@ builder.Services.AddInfrastructure(builder.Configuration);
 
 // JWT Authentication configuration
 var jwtSettings = builder.Configuration.GetSection("Jwt");
-var jwtSecret = builder.Configuration["Jwt:Secret"] ?? "your-super-secret-jwt-key-min-256-bits-long-for-security";
+var jwtSecret = builder.Configuration["Jwt:Secret"] 
+    ?? throw new InvalidOperationException("JWT Secret is not configured. Please set it in User Secrets or Environment Variables.");
 
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     .AddJwtBearer(options =>
@@ -42,8 +43,10 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
             ValidateAudience = true,
             ValidateLifetime = true,
             ValidateIssuerSigningKey = true,
-            ValidIssuer = jwtSettings["Issuer"],
-            ValidAudience = jwtSettings["Audience"],
+            ValidIssuer = jwtSettings["Issuer"] 
+                ?? throw new InvalidOperationException("JWT Issuer is not configured."),
+            ValidAudience = jwtSettings["Audience"] 
+                ?? throw new InvalidOperationException("JWT Audience is not configured."),
             IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtSecret)),
             ClockSkew = TimeSpan.Zero
         };
