@@ -66,11 +66,11 @@ public sealed class CreateWorkflowCommandHandler : IRequestHandler<CreateWorkflo
                 name: request.Name,
                 description: request.Description,
                 createdBy: currentUserId.Value,
-                category: request.Category,
-                priority: request.Priority,
+                category: request.Category ?? "General",
+                priority: request.Priority ?? Domain.Common.Enumerations.WorkflowPriority.Normal,
                 defaultTimeout: request.DefaultTimeout,
-                maxConcurrentExecutions: request.MaxConcurrentExecutions,
-                isTemplate: request.IsTemplate,
+                maxConcurrentExecutions: request.MaxConcurrentExecutions ?? 10,
+                isTemplate: request.IsTemplate ?? false,
                 globalVariables: request.GlobalVariables);
 
             // Persist the workflow

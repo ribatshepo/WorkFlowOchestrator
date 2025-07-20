@@ -8,14 +8,65 @@ namespace WorkflowPlatform.Application.Workflows.Commands.CreateWorkflow;
 /// </summary>
 public sealed record CreateWorkflowCommand : IRequest<CreateWorkflowResult>
 {
+    /// <summary>
+    /// The name of the workflow
+    /// </summary>
     public string Name { get; init; } = string.Empty;
+
+    /// <summary>
+    /// The description of the workflow
+    /// </summary>
     public string Description { get; init; } = string.Empty;
-    public string Category { get; init; } = "General";
-    public WorkflowPriority Priority { get; init; } = WorkflowPriority.Normal;
+
+    /// <summary>
+    /// The workflow definition (JSON or XML)
+    /// </summary>
+    public string? Definition { get; init; }
+
+    /// <summary>
+    /// The version of the workflow
+    /// </summary>
+    public string? Version { get; init; }
+
+    /// <summary>
+    /// Whether the workflow is active
+    /// </summary>
+    public bool? IsActive { get; init; }
+
+    /// <summary>
+    /// The workflow category
+    /// </summary>
+    public string? Category { get; init; }
+
+    /// <summary>
+    /// Tags associated with the workflow
+    /// </summary>
+    public List<string>? Tags { get; init; }
+
+    /// <summary>
+    /// Priority level of the workflow
+    /// </summary>
+    public WorkflowPriority? Priority { get; init; }
+
+    /// <summary>
+    /// Default timeout for workflow execution
+    /// </summary>
     public TimeSpan? DefaultTimeout { get; init; }
-    public int MaxConcurrentExecutions { get; init; } = 10;
-    public bool IsTemplate { get; init; } = false;
-    public Dictionary<string, object> GlobalVariables { get; init; } = new();
+
+    /// <summary>
+    /// Maximum number of concurrent executions allowed
+    /// </summary>
+    public int? MaxConcurrentExecutions { get; init; }
+
+    /// <summary>
+    /// Whether this workflow is a template
+    /// </summary>
+    public bool? IsTemplate { get; init; }
+
+    /// <summary>
+    /// Global variables for the workflow
+    /// </summary>
+    public Dictionary<string, object>? GlobalVariables { get; init; }
 }
 
 /// <summary>

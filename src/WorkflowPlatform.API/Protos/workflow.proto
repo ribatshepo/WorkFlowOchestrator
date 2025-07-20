@@ -1,0 +1,282 @@
+syntax = "proto3";
+
+package workflow;
+
+option csharp_namespace = "WorkflowPlatform.API.Grpc";
+
+import "google/protobuf/timestamp.proto";
+import "google/protobuf/empty.proto";
+
+// Workflow Service for high-performance operations
+service WorkflowService {
+  // Get workflow by ID
+  rpc GetWorkflow(GetWorkflowRequest) returns (WorkflowResponse);
+  
+  // Create new workflow
+  rpc CreateWorkflow(CreateWorkflowRequest) returns (CreateWorkflowResponse);
+  
+  // Update existing workflow
+  rpc UpdateWorkflow(UpdateWorkflowRequest) returns (WorkflowResponse);
+  
+  // Delete workflow
+  rpc DeleteWorkflow(DeleteWorkflowRequest) returns (google.protobuf.Empty);
+  
+  // List workflows with pagination
+  rpc ListWorkflows(ListWorkflowsRequest) returns (ListWorkflowsResponse);
+  
+  // Validate workflow definition
+  rpc ValidateWorkflow(ValidateWorkflowRequest) returns (ValidateWorkflowResponse);
+}
+
+// Workflow Execution Service for streaming operations
+service WorkflowExecutionService {
+  // Execute workflow with streaming status updates
+  rpc ExecuteWorkflow(ExecuteWorkflowRequest) returns (stream ExecutionStatusUpdate);
+  
+  // Get execution status
+  rpc GetExecutionStatus(GetExecutionStatusRequest) returns (ExecutionStatusResponse);
+  
+  // Cancel running execution
+  rpc CancelExecution(CancelExecutionRequest) returns (google.protobuf.Empty);
+  
+  // Stream execution metrics
+  rpc StreamExecutionMetrics(StreamMetricsRequest) returns (stream ExecutionMetrics);
+  
+  // Batch execute multiple workflows
+  rpc BatchExecuteWorkflows(BatchExecuteRequest) returns (stream BatchExecutionUpdate);
+}
+
+// Request/Response Messages
+message GetWorkflowRequest {
+  string workflow_id = 1;
+  bool include_definition = 2;
+}
+
+message CreateWorkflowRequest {
+  string name = 1;
+  string description = 2;
+  WorkflowDefinition definition = 3;
+  map<string, string> metadata = 4;
+}
+
+message UpdateWorkflowRequest {
+  string workflow_id = 1;
+  string name = 2;
+  string description = 3;
+  WorkflowDefinition definition = 4;
+  map<string, string> metadata = 5;
+}
+
+message DeleteWorkflowRequest {
+  string workflow_id = 1;
+  bool force_delete = 2;
+}
+
+message ListWorkflowsRequest {
+  int32 page_size = 1;
+  string page_token = 2;
+  WorkflowFilter filter = 3;
+  string order_by = 4;
+}
+
+message ValidateWorkflowRequest {
+  WorkflowDefinition definition = 1;
+  bool strict_validation = 2;
+}
+
+message ExecuteWorkflowRequest {
+  string workflow_id = 1;
+  string input_data = 2; // JSON string
+  map<string, string> execution_context = 3;
+  int32 timeout_seconds = 4;
+}
+
+message GetExecutionStatusRequest {
+  string execution_id = 1;
+  bool include_logs = 2;
+}
+
+message CancelExecutionRequest {
+  string execution_id = 1;
+  string reason = 2;
+}
+
+message StreamMetricsRequest {
+  string workflow_id = 1;
+  google.protobuf.Timestamp start_time = 2;
+  int32 interval_seconds = 3;
+}
+
+message BatchExecuteRequest {
+  repeated ExecuteWorkflowRequest requests = 1;
+  bool fail_fast = 2;
+  int32 max_concurrency = 3;
+}
+
+// Response Messages
+message WorkflowResponse {
+  string workflow_id = 1;
+  string name = 2;
+  string description = 3;
+  WorkflowDefinition definition = 4;
+  WorkflowStatus status = 5;
+  google.protobuf.Timestamp created_at = 6;
+  google.protobuf.Timestamp updated_at = 7;
+  map<string, string> metadata = 8;
+}
+
+message CreateWorkflowResponse {
+  string workflow_id = 1;
+  bool success = 2;
+  string error_message = 3;
+}
+
+message ListWorkflowsResponse {
+  repeated WorkflowResponse workflows = 1;
+  string next_page_token = 2;
+  int32 total_count = 3;
+}
+
+message ValidateWorkflowResponse {
+  bool is_valid = 1;
+  repeated ValidationError errors = 2;
+  repeated string warnings = 3;
+}
+
+message ExecutionStatusUpdate {
+  string execution_id = 1;
+  ExecutionStatus status = 2;
+  string current_node_id = 3;
+  int32 progress_percentage = 4;
+  string output_data = 5; // JSON string
+  string error_message = 6;
+  google.protobuf.Timestamp timestamp = 7;
+  ExecutionMetrics metrics = 8;
+}
+
+message ExecutionStatusResponse {
+  string execution_id = 1;
+  string workflow_id = 2;
+  ExecutionStatus status = 3;
+  google.protobuf.Timestamp started_at = 4;
+  google.protobuf.Timestamp completed_at = 5;
+  string output_data = 6; // JSON string
+  string error_message = 7;
+  repeated NodeExecutionResult node_results = 8;
+}
+
+message BatchExecutionUpdate {
+  string batch_id = 1;
+  int32 total_requests = 2;
+  int32 completed_requests = 3;
+  int32 failed_requests = 4;
+  repeated ExecutionStatusUpdate execution_updates = 5;
+}
+
+message ExecutionMetrics {
+  int64 execution_time_ms = 1;
+  int32 nodes_executed = 2;
+  int32 nodes_failed = 3;
+  int64 memory_usage_bytes = 4;
+  int32 cpu_usage_percentage = 5;
+  map<string, int64> custom_metrics = 6;
+}
+
+// Complex Types
+message WorkflowDefinition {
+  repeated WorkflowNode nodes = 1;
+  repeated WorkflowEdge edges = 2;
+  map<string, string> variables = 3;
+  WorkflowSettings settings = 4;
+}
+
+message WorkflowNode {
+  string node_id = 1;
+  string node_type = 2;
+  string name = 3;
+  string description = 4;
+  NodeConfiguration configuration = 5;
+  Position position = 6;
+  map<string, string> metadata = 7;
+}
+
+message WorkflowEdge {
+  string edge_id = 1;
+  string source_node_id = 2;
+  string target_node_id = 3;
+  string source_handle = 4;
+  string target_handle = 5;
+  EdgeCondition condition = 6;
+}
+
+message NodeConfiguration {
+  string config_json = 1; // JSON string for flexibility
+  int32 timeout_seconds = 2;
+  int32 retry_count = 3;
+  bool parallel_execution = 4;
+}
+
+message Position {
+  double x = 1;
+  double y = 2;
+}
+
+message EdgeCondition {
+  string condition_type = 1;
+  string expression = 2;
+  map<string, string> parameters = 3;
+}
+
+message WorkflowSettings {
+  int32 max_execution_time_seconds = 1;
+  int32 max_parallel_nodes = 2;
+  bool enable_logging = 3;
+  string log_level = 4;
+  map<string, string> environment_variables = 5;
+}
+
+message WorkflowFilter {
+  string name_contains = 1;
+  WorkflowStatus status = 2;
+  google.protobuf.Timestamp created_after = 3;
+  google.protobuf.Timestamp created_before = 4;
+  repeated string tags = 5;
+}
+
+message ValidationError {
+  string field = 1;
+  string message = 2;
+  string error_code = 3;
+  map<string, string> context = 4;
+}
+
+message NodeExecutionResult {
+  string node_id = 1;
+  string node_name = 2;
+  ExecutionStatus status = 3;
+  google.protobuf.Timestamp started_at = 4;
+  google.protobuf.Timestamp completed_at = 5;
+  string output_data = 6; // JSON string
+  string error_message = 7;
+  ExecutionMetrics metrics = 8;
+}
+
+// Enums
+enum WorkflowStatus {
+  WORKFLOW_STATUS_UNSPECIFIED = 0;
+  WORKFLOW_STATUS_DRAFT = 1;
+  WORKFLOW_STATUS_ACTIVE = 2;
+  WORKFLOW_STATUS_INACTIVE = 3;
+  WORKFLOW_STATUS_ARCHIVED = 4;
+  WORKFLOW_STATUS_ERROR = 5;
+}
+
+enum ExecutionStatus {
+  EXECUTION_STATUS_UNSPECIFIED = 0;
+  EXECUTION_STATUS_PENDING = 1;
+  EXECUTION_STATUS_RUNNING = 2;
+  EXECUTION_STATUS_COMPLETED = 3;
+  EXECUTION_STATUS_FAILED = 4;
+  EXECUTION_STATUS_CANCELLED = 5;
+  EXECUTION_STATUS_TIMEOUT = 6;
+}

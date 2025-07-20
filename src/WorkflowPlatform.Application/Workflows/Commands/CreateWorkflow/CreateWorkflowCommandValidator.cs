@@ -33,12 +33,13 @@ public sealed class CreateWorkflowCommandValidator : AbstractValidator<CreateWor
 
         RuleFor(x => x.Priority)
             .IsInEnum()
-            .WithMessage("Invalid priority value.");
+            .WithMessage("Invalid priority value.")
+            .When(x => x.Priority.HasValue);
 
         RuleFor(x => x.DefaultTimeout)
-            .Must(timeout => !timeout.HasValue || timeout.Value > TimeSpan.Zero)
+            .Must(timeout => timeout!.Value > TimeSpan.Zero)
             .WithMessage("Default timeout must be greater than zero.")
-            .Must(timeout => !timeout.HasValue || timeout.Value <= TimeSpan.FromHours(24))
+            .Must(timeout => timeout!.Value <= TimeSpan.FromHours(24))
             .WithMessage("Default timeout cannot exceed 24 hours.")
             .When(x => x.DefaultTimeout.HasValue);
 
@@ -46,21 +47,22 @@ public sealed class CreateWorkflowCommandValidator : AbstractValidator<CreateWor
             .GreaterThan(0)
             .WithMessage("Maximum concurrent executions must be greater than zero.")
             .LessThanOrEqualTo(1000)
-            .WithMessage("Maximum concurrent executions cannot exceed 1000.");
+            .WithMessage("Maximum concurrent executions cannot exceed 1000.")
+            .When(x => x.MaxConcurrentExecutions.HasValue);
 
         RuleFor(x => x.GlobalVariables)
-            .Must(variables => variables.Count <= 100)
+            .Must(variables => variables!.Count <= 100)
             .WithMessage("Cannot exceed 100 global variables.")
             .When(x => x.GlobalVariables != null);
 
         // Validate global variable names
-        RuleForEach(x => x.GlobalVariables.Keys)
+        RuleForEach(x => x.GlobalVariables!.Keys)
             .Must(key => !string.IsNullOrWhiteSpace(key))
             .WithMessage("Global variable names cannot be null or whitespace.")
             .Must(key => key.Length <= 50)
             .WithMessage("Global variable names cannot exceed 50 characters.")
             .Matches(@"^[a-zA-Z][a-zA-Z0-9_]*$")
             .WithMessage("Global variable names must start with a letter and contain only letters, numbers, and underscores.")
-            .When(x => x.GlobalVariables?.Any() == true);
+            .When(x => x.GlobalVariables?.Any() is true);
     }
 }
